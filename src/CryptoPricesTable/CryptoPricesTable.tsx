@@ -48,6 +48,32 @@ export const CryptoPricesTable = () => {
     fetchCoins(1);
   }, []);
 
+  useEffect(() => {
+    if (!data.length) return;
+
+    const assetsIDs = data.map(item => item.id).join(',');
+    const websocket = new WebSocket(`wss://ws.coincap.io/prices?assets=${assetsIDs}`);
+    websocket.onmessage = (msg) => {
+      const updates = JSON.parse(msg.data);
+      const coinsIDsToUpdate = Object.keys(updates);
+      
+      const updatedData = data.map(item => {
+        return coinsIDsToUpdate.includes(item.id)
+          ? {
+            ...item,
+            priceUsd: updates[item.id]
+          }
+          : item;
+      });
+
+      setData(updatedData);
+    };
+
+    return () => {
+      websocket.close();
+    };
+  }, [data]);
+
   const theme = useTableTheme();
 
   return (
