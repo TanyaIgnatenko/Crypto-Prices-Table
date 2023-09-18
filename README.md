@@ -1,2 +1,2 @@
 # crypto-prices-table
-A Table with Cryptocurrency prices information
+A Table with info about cryptocurrencies
