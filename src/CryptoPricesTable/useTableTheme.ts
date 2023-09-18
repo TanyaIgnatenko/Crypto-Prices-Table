@@ -18,6 +18,11 @@ export function useTableTheme() {
           &:nth-of-type(2) {
             left: 150px;
           }
+
+          & > div {
+            display: flex;
+            align-items: center;
+          }
         `,
         },
     ]);

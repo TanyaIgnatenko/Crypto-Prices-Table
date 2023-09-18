@@ -13,6 +13,8 @@ import { Group, Pagination } from '@mantine/core';
 
 import { useTableTheme } from './useTableTheme';
 
+import './CryptoPricesTable.css'
+
 const GET_COINS_MARKETS_URL = 'https://api.coincap.io/v2/assets'
 
 const priceFormatter = new Intl.NumberFormat('en-US', {
@@ -56,7 +58,7 @@ export const CryptoPricesTable = () => {
     websocket.onmessage = (msg) => {
       const updates = JSON.parse(msg.data);
       const coinsIDsToUpdate = Object.keys(updates);
-      
+
       const updatedData = data.map(item => {
         return coinsIDsToUpdate.includes(item.id)
           ? {
@@ -96,7 +98,10 @@ export const CryptoPricesTable = () => {
               {tableList.map((item) => (
                 <Row key={item.id} item={item}>
                   <Cell pinLeft={true}>{item.rank}</Cell>
-                  <Cell pinLeft={true}>{item.name}</Cell>
+                  <Cell pinLeft={true}>
+                    <img className="crypto-icon" src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`} />
+                    {item.name}
+                  </Cell>
                   <Cell>{priceFormatter.format(item.priceUsd)}</Cell>
                   <Cell>{priceFormatter.format(item.marketCapUsd)}</Cell>
                   <Cell>{(Math.round(item.changePercent24Hr * 100) / 100).toFixed(2) + '%'}</Cell>
