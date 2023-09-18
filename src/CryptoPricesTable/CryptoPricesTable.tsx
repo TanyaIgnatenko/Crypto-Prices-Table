@@ -84,8 +84,8 @@ export const CryptoPricesTable = () => {
           <>
             <Header>
               <HeaderRow>
-                <HeaderCell>Rank</HeaderCell>
-                <HeaderCell>Name</HeaderCell>
+                <HeaderCell pinLeft={true}>Rank</HeaderCell>
+                <HeaderCell pinLeft={true}>Name</HeaderCell>
                 <HeaderCell>Price</HeaderCell>
                 <HeaderCell>Market Cap</HeaderCell>
                 <HeaderCell>Change (24Hr)</HeaderCell>
@@ -95,8 +95,8 @@ export const CryptoPricesTable = () => {
             <Body>
               {tableList.map((item) => (
                 <Row key={item.id} item={item}>
-                  <Cell>{item.rank}</Cell>
-                  <Cell>{item.name}</Cell>
+                  <Cell pinLeft={true}>{item.rank}</Cell>
+                  <Cell pinLeft={true}>{item.name}</Cell>
                   <Cell>{priceFormatter.format(item.priceUsd)}</Cell>
                   <Cell>{priceFormatter.format(item.marketCapUsd)}</Cell>
                   <Cell>{(Math.round(item.changePercent24Hr * 100) / 100).toFixed(2) + '%'}</Cell>
