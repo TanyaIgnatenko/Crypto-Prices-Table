@@ -1,5 +1,15 @@
+iframe {
+    display: none;
+}
+
 .crypto-icon {
     width: 30px;
     height: 30px;
     margin-right: 5px;
+}
+
+.loadMoreButtonBox {
+    width: 100vw;
+    display: flex;
+    justify-content: center;
 }

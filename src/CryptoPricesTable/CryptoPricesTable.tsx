@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Table,
   Header,
@@ -22,14 +22,15 @@ const priceFormatter = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 });
 
-const TABLE_PAGE_SIZE = 15;
+const TABLE_PAGE_SIZE = 12;
 const TOTAL_ASSETS_COUNT = 2296;
 
-export const CryptoPricesTable = () => {
+export const CryptoPricesTable = ({ isFeed = false }) => {
   const [data, setData] = useState([]);
 
   const onPaginationChange = ({ payload: { page } }) => {
-    fetchCoins(page + 1);
+    fetchCoins(page + 1)
+      .then(({ data }) => setData(data));
   }
   const pagination = usePagination(data, {
     state: {
@@ -40,14 +41,14 @@ export const CryptoPricesTable = () => {
   });
 
   function fetchCoins(page: number) {
-    fetch(`${GET_COINS_MARKETS_URL}?offset=${(page - 1) * TABLE_PAGE_SIZE}&limit=${TABLE_PAGE_SIZE}`)
+    return fetch(`${GET_COINS_MARKETS_URL}?offset=${(page - 1) * TABLE_PAGE_SIZE}&limit=${TABLE_PAGE_SIZE}`)
       .then(resp => resp.json())
-      .then(({ data }) => setData(data))
       .catch(e => console.log(e));
   }
 
   useEffect(() => {
-    fetchCoins(1);
+    fetchCoins(1)
+      .then(({ data }) => setData(data));
   }, []);
 
   useEffect(() => {
@@ -78,6 +79,18 @@ export const CryptoPricesTable = () => {
 
   const theme = useTableTheme();
 
+  const [page, setPage] = useState(1);
+  const [loadingID, setLoadingID] = useState();
+  const handleLoadMoreClick = (item) => {
+    setLoadingID(item.id);
+    fetchCoins(page + 1)
+      .then(({ data: newData }) => {
+        setData([...data, ...newData]);
+        setPage(page + 1);
+        setLoadingID(null);
+      })
+  };
+
   return (
     <div>
       <h1 style={{ textAlign: 'center', color: 'rgb(33, 33, 33)' }}>Crypto Prices</h1>
@@ -95,23 +108,39 @@ export const CryptoPricesTable = () => {
             </Header>
 
             <Body>
-              {tableList.map((item) => (
-                <Row key={item.id} item={item}>
-                  <Cell pinLeft={true}>{item.rank}</Cell>
-                  <Cell pinLeft={true}>
-                    <img className="crypto-icon" src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`} />
-                    {item.name}
-                  </Cell>
-                  <Cell>{priceFormatter.format(item.priceUsd)}</Cell>
-                  <Cell>{priceFormatter.format(item.marketCapUsd)}</Cell>
-                  <Cell>{(Math.round(item.changePercent24Hr * 100) / 100).toFixed(2) + '%'}</Cell>
-                </Row>
-              ))}
+              {tableList.map((item, idx) => {
+                console.log(tableList.length);
+                const showLoadMore = isFeed && idx === (tableList.length - 1) && idx < TOTAL_ASSETS_COUNT;
+                const showLoading = item.id === loadingID;
+                console.log(showLoadMore);
+                return (
+                  <>
+                    <Row key={item.id} item={item}>
+                      <Cell pinLeft={true}>{item.rank}</Cell>
+                      <Cell pinLeft={true}>
+                        <img className="crypto-icon" src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`} />
+                        {item.name}
+                      </Cell>
+                      <Cell>{priceFormatter.format(item.priceUsd)}</Cell>
+                      <Cell>{priceFormatter.format(item.marketCapUsd)}</Cell>
+                      <Cell>{(Math.round(item.changePercent24Hr * 100) / 100).toFixed(2) + '%'}</Cell>
+                    </Row>
+                    {(showLoadMore || showLoading) && (
+                      <div className="loadMoreButton">
+                        {showLoading
+                          ? 'Loading...'
+                          : <button onClick={() => handleLoadMoreClick(item)}>View more...</button>
+                        }
+                      </div>
+                    )}
+                  </>
+                );
+              })}
             </Body>
           </>
         )}
       </Table>
-      <Group position="right" mx={10}>
+      {!isFeed && (<Group position="right" mx={10}>
         <Pagination
           total={TOTAL_ASSETS_COUNT / TABLE_PAGE_SIZE}
           page={pagination.state.page + 1}
@@ -119,6 +148,7 @@ export const CryptoPricesTable = () => {
           isServer={true}
         />
       </Group>
+      )}
     </div>
   );
 };
