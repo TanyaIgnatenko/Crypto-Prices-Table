@@ -117,7 +117,7 @@ export const CryptoPricesTable = ({ isFeed = false }) => {
                 
                 return (
                   <>
-                    <Row key={item.id} item={item}>
+                    <Row key={item.id} item={item} className={item.hasGrown ? 'hasGrown' : item.hasFallen ? 'hasFallen' : undefined}>
                       <Cell pinLeft={true}>{item.rank}</Cell>
                       <Cell pinLeft={true}>
                         <img className="crypto-icon" src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`} />
