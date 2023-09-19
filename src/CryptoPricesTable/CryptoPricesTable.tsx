@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table,
   Header,
@@ -22,7 +22,7 @@ const priceFormatter = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 });
 
-const TABLE_PAGE_SIZE = 12;
+const TABLE_PAGE_SIZE = 15;
 const TOTAL_ASSETS_COUNT = 2296;
 
 export const CryptoPricesTable = ({ isFeed = false }) => {
@@ -64,7 +64,9 @@ export const CryptoPricesTable = ({ isFeed = false }) => {
         return coinsIDsToUpdate.includes(item.id)
           ? {
             ...item,
-            priceUsd: updates[item.id]
+            priceUsd: updates[item.id],
+            hasGrown: item.priceUsd < updates[item.id],
+            hasFallen: item.priceUsd > updates[item.id]
           }
           : item;
       });
@@ -92,9 +94,8 @@ export const CryptoPricesTable = ({ isFeed = false }) => {
   };
 
   return (
-    <div>
-      <h1 style={{ textAlign: 'center', color: 'rgb(33, 33, 33)' }}>Crypto Prices</h1>
-      <Table data={{ nodes: data }} theme={theme} layout={{ custom: true, horizontalScroll: true }}>
+    <>
+      <Table data={{ nodes: data }} theme={theme} layout={{ custom: true, horizontalScroll: true }} >
         {(tableList) => (
           <>
             <Header>
@@ -104,6 +105,7 @@ export const CryptoPricesTable = ({ isFeed = false }) => {
                 <HeaderCell>Price</HeaderCell>
                 <HeaderCell>Market Cap</HeaderCell>
                 <HeaderCell>Change (24Hr)</HeaderCell>
+                <HeaderCell>VWAP (24Hr)</HeaderCell>
               </HeaderRow>
             </Header>
 
@@ -112,7 +114,7 @@ export const CryptoPricesTable = ({ isFeed = false }) => {
                 console.log(tableList.length);
                 const showLoadMore = isFeed && idx === (tableList.length - 1) && idx < TOTAL_ASSETS_COUNT;
                 const showLoading = item.id === loadingID;
-                console.log(showLoadMore);
+                
                 return (
                   <>
                     <Row key={item.id} item={item}>
@@ -124,6 +126,7 @@ export const CryptoPricesTable = ({ isFeed = false }) => {
                       <Cell>{priceFormatter.format(item.priceUsd)}</Cell>
                       <Cell>{priceFormatter.format(item.marketCapUsd)}</Cell>
                       <Cell>{(Math.round(item.changePercent24Hr * 100) / 100).toFixed(2) + '%'}</Cell>
+                      <Cell>{priceFormatter.format(item.vwap24Hr)}</Cell>
                     </Row>
                     {(showLoadMore || showLoading) && (
                       <div className="loadMoreButton">
@@ -140,16 +143,17 @@ export const CryptoPricesTable = ({ isFeed = false }) => {
           </>
         )}
       </Table>
-      {!isFeed && (<Group position="right" mx={10}>
-        <Pagination
-          total={TOTAL_ASSETS_COUNT / TABLE_PAGE_SIZE}
-          page={pagination.state.page + 1}
-          onChange={(page) => pagination.fns.onSetPage(page - 1)}
-          isServer={true}
-        />
-      </Group>
-      )}
-    </div>
+      {!isFeed && (
+            <Group position="right" mx={10} my={5}>
+              <Pagination
+                total={TOTAL_ASSETS_COUNT / TABLE_PAGE_SIZE}
+                page={pagination.state.page + 1}
+                onChange={(page) => pagination.fns.onSetPage(page - 1)}
+                isServer={true}
+              />
+            </Group>
+      )} 
+    </>   
   );
 };
 
