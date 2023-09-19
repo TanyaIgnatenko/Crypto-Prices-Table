@@ -1,2 +1,4 @@
 # crypto-prices-table
-A Table with info about cryptocurrencies
+A Table with real-time cryptocurrency prices.
+
+__Demo:__ https://tanyaignatenko.github.io/crypto-prices-table/
