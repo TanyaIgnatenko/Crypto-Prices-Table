@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Table,
   Header,
@@ -39,6 +39,10 @@ export const CryptoPricesTable = () => {
       .then(({ data }) => setData(data));
   }, []);
 
+  const coinsRowsRef = useRef([]);
+  const setCoinRowRef = (node, i) => {
+    coinsRowsRef.current[i] = node;
+  };
   useEffect(() => {
     if (!data.length) return;
 
@@ -48,13 +52,30 @@ export const CryptoPricesTable = () => {
       const updates = JSON.parse(msg.data);
       const coinsIDsToUpdate = Object.keys(updates);
 
-      const updatedData = data.map(item => {
-        return coinsIDsToUpdate.includes(item.id)
+      const updatedData = data.map((item, i) => {
+        const hasUpdates = coinsIDsToUpdate.includes(item.id);
+        if (hasUpdates) {
+          const hasGrown = item.priceUsd < updates[item.id];
+          const hasFallen = item.priceUsd > updates[item.id];
+          const coinRow: HTMLElement = coinsRowsRef.current[i];
+
+          if (hasGrown) {
+            coinRow.classList.add('green-flash');
+            setTimeout(() => {
+              coinRow.classList.remove('green-flash');
+            }, 400);
+          } else if (hasFallen) {
+            coinRow.classList.add('red-flash');
+            setTimeout(() => {
+              coinRow.classList.remove('red-flash');
+            }, 400);
+          }
+        }
+
+        return hasUpdates
           ? {
             ...item,
-            priceUsd: updates[item.id],
-            hasGrown: item.priceUsd < updates[item.id],
-            hasFallen: item.priceUsd > updates[item.id]
+            priceUsd: updates[item.id]
           }
           : item;
       });
@@ -98,10 +119,10 @@ export const CryptoPricesTable = () => {
             </Header>
 
             <Body>
-              {tableList.map((item) => {
+              {tableList.map((item, i) => {
                 return (
-                  <>
-                    <Row key={item.id} item={item} className={item.hasGrown ? 'hasGrown' : item.hasFallen ? 'hasFallen' : undefined}>
+                  <Row key={item.id} item={item} >
+                    <div className="row" ref={node => setCoinRowRef(node, i)}>
                       <Cell pinLeft={true}>{item.rank}</Cell>
                       <Cell pinLeft={true}>
                         <img className="crypto-icon" src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`} />
@@ -111,8 +132,8 @@ export const CryptoPricesTable = () => {
                       <Cell>{priceFormatter.format(item.marketCapUsd)}</Cell>
                       <Cell>{(Math.round(item.changePercent24Hr * 100) / 100).toFixed(2) + '%'}</Cell>
                       <Cell>{priceFormatter.format(item.vwap24Hr)}</Cell>
-                    </Row>
-                  </>
+                    </div>
+                  </Row>
                 );
               })}
             </Body>

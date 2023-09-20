@@ -1,3 +1,7 @@
+iframe {
+    display: none;
+}
+
 .crypto-icon {
     width: 30px;
     height: 30px;
@@ -10,29 +14,16 @@
     justify-content: center;
 }
 
-.hasGrown {
-    animation: 500ms ease green-flash !important;
+.row {
+    display: contents;
+    transition: background 200ms ease;
+    background: white;
 }
 
-.hasFallen {
-    animation: 500ms ease red-flash !important;
+.green-flash {
+    background: rgb(199, 245, 199);
 }
 
-
-@keyframes green-flash {
-    50% {
-        background: rgb(199, 245, 199);
-    }
-
-    100% {
-    }
-}
-
-@keyframes red-flash {
-    50% {
-        background: rgb(235, 183, 183);
-    }
-
-    100% {
-    }
+.red-flash {
+    background: rgb(235, 183, 183);
 }
