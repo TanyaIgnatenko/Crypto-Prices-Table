@@ -16,6 +16,7 @@ import { useTableTheme } from './useTableTheme';
 import './CryptoPricesTable.css'
 
 const GET_COINS_MARKETS_URL = 'https://api.coincap.io/v2/assets';
+const WEB_SOCKETS_API_URL = 'wss://ws.coincap.io/prices';
 
 const priceFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -26,7 +27,7 @@ const TABLE_PAGE_SIZE = 15;
 const TOTAL_ASSETS_COUNT = 2296;
 
 export const CryptoPricesTable = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({nodes: []});
 
   function fetchCoins(page: number) {
     return fetch(`${GET_COINS_MARKETS_URL}?offset=${(page - 1) * TABLE_PAGE_SIZE}&limit=${TABLE_PAGE_SIZE}`)
@@ -36,7 +37,7 @@ export const CryptoPricesTable = () => {
 
   useEffect(() => {
     fetchCoins(1)
-      .then(({ data }) => setData(data));
+      .then(({ data }) => setData({nodes: data}));
   }, []);
 
   const coinsRowsRef = useRef([]);
@@ -44,15 +45,15 @@ export const CryptoPricesTable = () => {
     coinsRowsRef.current[i] = node;
   };
   useEffect(() => {
-    if (!data.length) return;
+    if (!data.nodes.length) return;
 
-    const assetsIDs = data.map(item => item.id).join(',');
-    const websocket = new WebSocket(`wss://ws.coincap.io/prices?assets=${assetsIDs}`);
+    const assetsIDs = data.nodes.map(item => item.id).join(',');
+    const websocket = new WebSocket(`${WEB_SOCKETS_API_URL}?assets=${assetsIDs}`);
     websocket.onmessage = (msg) => {
       const updates = JSON.parse(msg.data);
       const coinsIDsToUpdate = Object.keys(updates);
 
-      const updatedData = data.map((item, i) => {
+      const updatedData = data.nodes.map((item, i) => {
         const hasUpdates = coinsIDsToUpdate.includes(item.id);
         if (hasUpdates) {
           const hasGrown = item.priceUsd < updates[item.id];
@@ -80,7 +81,7 @@ export const CryptoPricesTable = () => {
           : item;
       });
 
-      setData(updatedData);
+      setData({nodes: updatedData});
     };
 
     return () => {
@@ -90,9 +91,9 @@ export const CryptoPricesTable = () => {
 
   const onPaginationChange = ({ payload: { page } }) => {
     fetchCoins(page + 1)
-      .then(({ data }) => setData(data));
+      .then(({ data }) => setData({nodes: data}));
   }
-  const pagination = usePagination(data, {
+  const pagination = usePagination(data.nodes, {
     state: {
       page: 0,
       size: TABLE_PAGE_SIZE,
@@ -104,7 +105,7 @@ export const CryptoPricesTable = () => {
 
   return (
     <>
-      <Table data={{ nodes: data }} theme={theme} layout={{ custom: true, horizontalScroll: true }} >
+      <Table data={data} theme={theme} layout={{ custom: true, horizontalScroll: true }} >
         {(tableList) => (
           <>
             <Header>
@@ -145,7 +146,7 @@ export const CryptoPricesTable = () => {
           total={TOTAL_ASSETS_COUNT / TABLE_PAGE_SIZE}
           page={pagination.state.page + 1}
           onChange={(page) => pagination.fns.onSetPage(page - 1)}
-          isServer={true}
+          isServer
         />
       </Group>
     </>
