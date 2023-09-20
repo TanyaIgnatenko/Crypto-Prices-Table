@@ -15,7 +15,7 @@ import { useTableTheme } from './useTableTheme';
 
 import './CryptoPricesTable.css'
 
-const GET_COINS_MARKETS_URL = 'https://api.coincap.io/v2/assets'
+const GET_COINS_MARKETS_URL = 'https://api.coincap.io/v2/assets';
 
 const priceFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -25,20 +25,8 @@ const priceFormatter = new Intl.NumberFormat('en-US', {
 const TABLE_PAGE_SIZE = 15;
 const TOTAL_ASSETS_COUNT = 2296;
 
-export const CryptoPricesTable = ({ isFeed = false }) => {
+export const CryptoPricesTable = () => {
   const [data, setData] = useState([]);
-
-  const onPaginationChange = ({ payload: { page } }) => {
-    fetchCoins(page + 1)
-      .then(({ data }) => setData(data));
-  }
-  const pagination = usePagination(data, {
-    state: {
-      page: 0,
-      size: TABLE_PAGE_SIZE,
-    },
-    onChange: onPaginationChange,
-  });
 
   function fetchCoins(page: number) {
     return fetch(`${GET_COINS_MARKETS_URL}?offset=${(page - 1) * TABLE_PAGE_SIZE}&limit=${TABLE_PAGE_SIZE}`)
@@ -79,19 +67,19 @@ export const CryptoPricesTable = ({ isFeed = false }) => {
     };
   }, [data]);
 
-  const theme = useTableTheme();
-
-  const [page, setPage] = useState(1);
-  const [loadingID, setLoadingID] = useState();
-  const handleLoadMoreClick = (item) => {
-    setLoadingID(item.id);
+  const onPaginationChange = ({ payload: { page } }) => {
     fetchCoins(page + 1)
-      .then(({ data: newData }) => {
-        setData([...data, ...newData]);
-        setPage(page + 1);
-        setLoadingID(null);
-      })
-  };
+      .then(({ data }) => setData(data));
+  }
+  const pagination = usePagination(data, {
+    state: {
+      page: 0,
+      size: TABLE_PAGE_SIZE,
+    },
+    onChange: onPaginationChange,
+  });
+
+  const theme = useTableTheme();
 
   return (
     <>
@@ -110,11 +98,7 @@ export const CryptoPricesTable = ({ isFeed = false }) => {
             </Header>
 
             <Body>
-              {tableList.map((item, idx) => {
-                console.log(tableList.length);
-                const showLoadMore = isFeed && idx === (tableList.length - 1) && idx < TOTAL_ASSETS_COUNT;
-                const showLoading = item.id === loadingID;
-                
+              {tableList.map((item) => {
                 return (
                   <>
                     <Row key={item.id} item={item} className={item.hasGrown ? 'hasGrown' : item.hasFallen ? 'hasFallen' : undefined}>
@@ -128,14 +112,6 @@ export const CryptoPricesTable = ({ isFeed = false }) => {
                       <Cell>{(Math.round(item.changePercent24Hr * 100) / 100).toFixed(2) + '%'}</Cell>
                       <Cell>{priceFormatter.format(item.vwap24Hr)}</Cell>
                     </Row>
-                    {(showLoadMore || showLoading) && (
-                      <div className="loadMoreButton">
-                        {showLoading
-                          ? 'Loading...'
-                          : <button onClick={() => handleLoadMoreClick(item)}>View more...</button>
-                        }
-                      </div>
-                    )}
                   </>
                 );
               })}
@@ -143,17 +119,15 @@ export const CryptoPricesTable = ({ isFeed = false }) => {
           </>
         )}
       </Table>
-      {!isFeed && (
-            <Group position="right" mx={10} my={5}>
-              <Pagination
-                total={TOTAL_ASSETS_COUNT / TABLE_PAGE_SIZE}
-                page={pagination.state.page + 1}
-                onChange={(page) => pagination.fns.onSetPage(page - 1)}
-                isServer={true}
-              />
-            </Group>
-      )} 
-    </>   
+      <Group position="right" mx={10} my={5}>
+        <Pagination
+          total={TOTAL_ASSETS_COUNT / TABLE_PAGE_SIZE}
+          page={pagination.state.page + 1}
+          onChange={(page) => pagination.fns.onSetPage(page - 1)}
+          isServer={true}
+        />
+      </Group>
+    </>
   );
 };
 
