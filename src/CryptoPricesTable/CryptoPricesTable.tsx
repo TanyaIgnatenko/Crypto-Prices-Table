@@ -117,13 +117,17 @@ export const CryptoPricesTable = () => {
 
   return (
     <>
-      <Table data={data} theme={theme} layout={{ custom: true, horizontalScroll: true }} >
+      <Table 
+        data={data} 
+        theme={theme} 
+        layout={{ custom: true, horizontalScroll: true }}
+      >
         {(tableList: Cryptocurrency[]) => (
           <>
             <Header>
               <HeaderRow>
-                <HeaderCell pinLeft={true}>Rank</HeaderCell>
-                <HeaderCell pinLeft={true}>Name</HeaderCell>
+                <HeaderCell pinLeft>Rank</HeaderCell>
+                <HeaderCell pinLeft>Name</HeaderCell>
                 <HeaderCell>Price</HeaderCell>
                 <HeaderCell>Market Cap</HeaderCell>
                 <HeaderCell>Change (24Hr)</HeaderCell>
@@ -136,8 +140,8 @@ export const CryptoPricesTable = () => {
                 return (
                   <Row key={item.id} item={item} >
                     <div className="row" ref={node => setCoinRowRef(node, i)}>
-                      <Cell pinLeft={true}>{item.rank}</Cell>
-                      <Cell pinLeft={true}>
+                      <Cell pinLeft>{item.rank}</Cell>
+                      <Cell pinLeft>
                         <img className="crypto-icon" src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`} />
                         {item.name}
                       </Cell>
