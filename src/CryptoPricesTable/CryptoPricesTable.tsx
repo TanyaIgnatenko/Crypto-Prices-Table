@@ -165,7 +165,7 @@ export const CryptoPricesTable = () => {
                       <Cell pinLeft>{item.rank}</Cell>
                       <Cell pinLeft>
                         <img className="crypto-icon" src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`} />
-                        {item.name}
+                        {item.name}&nbsp;<span className="crypto-symbol">{item.symbol}</span>
                       </Cell>
                       <Cell>{priceFormatter.format(+item.priceUsd)}</Cell>
                       <Cell>{priceFormatter.format(+item.marketCapUsd)}</Cell>
