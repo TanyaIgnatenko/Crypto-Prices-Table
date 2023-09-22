@@ -17,6 +17,7 @@ import { useTableTheme } from './useTableTheme';
 import './CryptoPricesTable.css'
 
 const GET_COINS_MARKETS_URL = 'https://api.coincap.io/v2/assets';
+const GET_COINS_MARKETS_URL2 = 'https://api.coingecko.com/api/v3/coins/markets';
 const WEB_SOCKETS_API_URL = 'wss://ws.coincap.io/prices';
 
 const priceFormatter = new Intl.NumberFormat('en-US', {
@@ -36,20 +37,41 @@ type Cryptocurrency = {
   marketCapUsd: string;
   changePercent24Hr: string;
   vwap24Hr: string;
+  changePercent7d?: number;
 };
 
 export const CryptoPricesTable = () => {
   const [data, setData] = useState<{nodes: Cryptocurrency[]}>({nodes: []});
 
   function fetchCoins(page: number) {
-    return fetch(`${GET_COINS_MARKETS_URL}?offset=${(page - 1) * TABLE_PAGE_SIZE}&limit=${TABLE_PAGE_SIZE}`)
+    return Promise.allSettled([
+      fetch(`${GET_COINS_MARKETS_URL}?offset=${(page - 1) * TABLE_PAGE_SIZE}&limit=${TABLE_PAGE_SIZE}`)
+      .then(resp => resp.json()),
+      fetch(`${GET_COINS_MARKETS_URL2}?vs_currency=usd&price_change_percentage=7d&sparkline=true&page=${page}&per_page=${TABLE_PAGE_SIZE}`)
       .then(resp => resp.json())
-      .catch(e => console.log(e));
+    ])
+      .then(([result1, result2]) => {
+        if (result1.status !== 'fulfilled') {
+          return;
+        }
+
+        const {data: data1} = result1.value;
+        const isData2Loaded = result2.status === 'fulfilled';
+        const data2 = isData2Loaded ? result2.value : undefined;
+        
+        return data1.map((item: Cryptocurrency, i: number) => {
+        return {
+          ...item,
+          changePercent7d: isData2Loaded ? data2[i].price_change_percentage_7d_in_currency : undefined,
+          sprakline7d: isData2Loaded ? data2[i].sparkline_in_7d : undefined,
+        };
+      });
+    });
   }
 
   useEffect(() => {
     fetchCoins(1)
-      .then(({ data }) => setData({nodes: data}));
+      .then((data) => setData({nodes: data}));
   }, []);
 
   const coinsRowsRef = useRef<(HTMLElement | null)[]>([]);
@@ -103,7 +125,7 @@ export const CryptoPricesTable = () => {
 
   const onPaginationChange  = ({ payload: { page } }: Action) => {
     fetchCoins(page + 1)
-      .then(({ data }) => setData({nodes: data}));
+      .then((data) => setData({nodes: data}));
   }
   const pagination = usePagination(data, {
     state: {
@@ -131,7 +153,7 @@ export const CryptoPricesTable = () => {
                 <HeaderCell>Price</HeaderCell>
                 <HeaderCell>Market Cap</HeaderCell>
                 <HeaderCell>Change (24Hr)</HeaderCell>
-                <HeaderCell>VWAP (24Hr)</HeaderCell>
+                <HeaderCell>Change (7d)</HeaderCell>
               </HeaderRow>
             </Header>
 
@@ -148,7 +170,7 @@ export const CryptoPricesTable = () => {
                       <Cell>{priceFormatter.format(+item.priceUsd)}</Cell>
                       <Cell>{priceFormatter.format(+item.marketCapUsd)}</Cell>
                       <Cell>{(Math.round(+item.changePercent24Hr * 100) / 100).toFixed(2) + '%'}</Cell>
-                      <Cell>{priceFormatter.format(+item.vwap24Hr)}</Cell>
+                      <Cell>{item.changePercent7d !== undefined ? priceFormatter.format(+item.changePercent7d) : '-'}</Cell>
                     </div>
                   </Row>
                 );
