@@ -14,8 +14,6 @@ import { Group, Pagination } from '@mantine/core';
 import { Line } from 'react-chartjs-2';
 import { Chart, registerables } from "chart.js"
 
-Chart.register(...registerables);
-
 import { useTableTheme } from './useTableTheme';
 import { mockDataForAPI2 } from './mockData';
 
@@ -23,6 +21,8 @@ import { ReactComponent as ArrowUpIcon } from '../assets/icons/arrow-up.svg';
 import { ReactComponent as ArrowDownIcon } from '../assets/icons/arrow-down.svg';
 
 import './CryptoPricesTable.css'
+
+Chart.register(...registerables);
 
 const GET_COINS_MARKETS_URL = 'https://api.coincap.io/v2/assets';
 const GET_COINS_MARKETS_URL2 = 'https://api.coingecko.com/api/v3/coins/markets';
