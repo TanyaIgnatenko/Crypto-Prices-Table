@@ -11,8 +11,13 @@ import {
 import { usePagination } from '@table-library/react-table-library/pagination';
 import { Action } from '@table-library/react-table-library/types/common';
 import { Group, Pagination } from '@mantine/core';
+import { Line } from 'react-chartjs-2';
+import { Chart, registerables } from "chart.js"
+
+Chart.register(...registerables);
 
 import { useTableTheme } from './useTableTheme';
+import { mockDataForAPI2 } from './mockData';
 
 import { ReactComponent as ArrowUpIcon } from '../assets/icons/arrow-up.svg';
 import { ReactComponent as ArrowDownIcon } from '../assets/icons/arrow-down.svg';
@@ -41,7 +46,46 @@ type Cryptocurrency = {
   changePercent24Hr: string;
   vwap24Hr: string;
   changePercent7d?: number;
+  sprakline7d?: number[];
 };
+
+const CHART_OPTIONS = {
+  plugins: {
+    legend: {
+      display: false,
+    },
+  },
+  animation: {
+    duration: 0
+  },
+  elements: {
+    point: {
+      radius: 0
+    }
+  },
+  scales: {
+    x: {
+      ticks: {
+        display: false,
+      },
+      grid: {
+        drawBorder: false,
+        display: false,
+      },
+    },
+    y: {
+      ticks: {
+        display: false,
+        beginAtZero: true,
+      },
+      grid: {
+        drawBorder: false,
+        display: false,
+      },
+    },
+  },
+};
+const CHART_HEIGHT = 54;
 
 export const CryptoPricesTable = () => {
   const [data, setData] = useState<{ nodes: Cryptocurrency[] }>({ nodes: [] });
@@ -60,13 +104,13 @@ export const CryptoPricesTable = () => {
 
         const { data: data1 } = result1.value;
         const isData2Loaded = result2.status === 'fulfilled';
-        const data2 = isData2Loaded ? result2.value : undefined;
+        const data2 = isData2Loaded ? result2.value : mockDataForAPI2;
 
         return data1.map((item: Cryptocurrency, i: number) => {
           return {
             ...item,
-            changePercent7d: isData2Loaded ? data2[i].price_change_percentage_7d_in_currency : undefined,
-            sprakline7d: isData2Loaded ? data2[i].sparkline_in_7d : undefined,
+            changePercent7d: data2[i].price_change_percentage_7d_in_currency,
+            sprakline7d: data2[i].sparkline_in_7d.price,
           };
         });
       });
@@ -140,6 +184,7 @@ export const CryptoPricesTable = () => {
                 <HeaderCell>Change (24Hr)</HeaderCell>
                 <HeaderCell>Change (7d)</HeaderCell>
                 <HeaderCell>Market Cap</HeaderCell>
+                <HeaderCell>Last 7 days</HeaderCell>
               </HeaderRow>
             </Header>
 
@@ -147,6 +192,19 @@ export const CryptoPricesTable = () => {
               {tableList.map((item, i) => {
                 const is24hChangePositive = +item.changePercent24Hr > 0;
                 const is7dChangePositive = item.changePercent7d !== undefined && item.changePercent7d > 0;
+
+                const data = {
+                  labels: item.sprakline7d?.map((v, i) => i),
+                  datasets: [
+                    {
+                      data: item.sprakline7d,
+                      borderColor: 'rgb(75, 202, 129)',
+                      borderWidth: 1,
+                      backgroundColor: 'rgba(75, 202, 129, 0.1)',
+                      fill: true
+                    }
+                  ],
+                };
 
                 return (
                   <Row key={item.id} item={item} >
@@ -163,15 +221,18 @@ export const CryptoPricesTable = () => {
                         {Math.abs(Math.round(+item.changePercent24Hr * 10) / 10).toFixed(2) + '%'}
                       </Cell>
                       <Cell className={item.changePercent7d === undefined ? undefined : is7dChangePositive ? 'green' : 'red'}>
-                        {item.changePercent7d !== undefined &&
+                        {item.changePercent7d === undefined ? undefined :
                           is7dChangePositive
-                          ? <ArrowUpIcon className="arrow-icon" />
-                          : <ArrowDownIcon className="arrow-icon" />
+                            ? <ArrowUpIcon className="arrow-icon" />
+                            : <ArrowDownIcon className="arrow-icon" />
                         }
                         &nbsp;
                         {item.changePercent7d !== undefined ? priceFormatter.format(Math.abs(item.changePercent7d)) : '-'}
                       </Cell>
                       <Cell>{priceFormatter.format(+item.marketCapUsd)}</Cell>
+                      <Cell>
+                        {item.sprakline7d ? <Line options={CHART_OPTIONS} data={data} height={CHART_HEIGHT} /> : '-'}
+                      </Cell>
                     </div>
                   </Row>
                 );
@@ -185,7 +246,7 @@ export const CryptoPricesTable = () => {
           total={TOTAL_CRYPTOCURRENCY_COUNT / TABLE_PAGE_SIZE}
           page={pagination.state.page + 1}
           onChange={(page) => pagination.fns.onSetPage(page - 1)}
-          isServer
+          isServ
         />
       </Group>
     </div>

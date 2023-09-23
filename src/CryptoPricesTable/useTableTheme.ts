@@ -8,7 +8,7 @@ export function useTableTheme() {
     getTheme(),
     {
       Table: `
-            --data-table-library_grid-template-columns:  80px 240px 275px 275px 275px 275px;
+            --data-table-library_grid-template-columns:  80px 240px 275px 275px 275px 275px 280px;
             `,
 
       HeaderCell: `
@@ -20,7 +20,8 @@ export function useTableTheme() {
 
       BaseCell: `
             & {
-              padding: 16px;
+              height: 54px;
+              padding: 0 16px;
               color: white;
               border-bottom: none !important;
             }  
