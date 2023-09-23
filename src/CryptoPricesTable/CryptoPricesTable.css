@@ -2,6 +2,11 @@ iframe {
     display: none;
 }
 
+.table-container {
+    width: 1382px;
+    margin: 0 auto;
+}
+
 .crypto-icon {
     width: 30px;
     height: 30px;
@@ -9,8 +14,20 @@ iframe {
 }
 
 .crypto-symbol {
-    color: rgba(0, 0, 0, 0.9);
-    opacity: 0.7;
+    color: rgb(128, 138, 157);
+}
+
+.arrow-icon {
+    width: 14px;
+    height: 14px;
+}
+
+.green {
+    color: #4bca81 !important;
+}
+
+.red {
+    color: #ed4a6d !important;
 }
 
 .loadMoreButtonBox {
@@ -23,12 +40,4 @@ iframe {
     display: contents;
     transition: background 200ms ease;
     background: white;
-}
-
-.green-flash {
-    background: rgb(199, 245, 199);
-}
-
-.red-flash {
-    background: rgb(235, 183, 183);
 }
