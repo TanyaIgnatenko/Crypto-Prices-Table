@@ -1,5 +1,4 @@
 .title {
-    font-family: Roboto,-apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
     font-size: 64px;
     text-align: center;
     color: rgba(255, 255, 255, .88);
@@ -8,4 +7,5 @@
 
 body {
     background: #0C0A1D;
+    font-family: Roboto,-apple-system, BlinkMacSystemFont, Segoe UI, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
