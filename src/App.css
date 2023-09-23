@@ -3,6 +3,7 @@
     text-align: center;
     color: rgba(255, 255, 255, .88);
     text-shadow: 0 0 80px rgba(192,219,255,.48), 0 0 32px rgba(65,120,255,.24);
+    margin-bottom: 40px;
 }
 
 body {
