@@ -6,7 +6,7 @@ import './App.css';
 
 function App() {
   useEffect(() => {
-    ReactGA.pageview(window.location.pathname + window.location.search);
+    ReactGA.send("pageview");
   }, []);
 
   return (
