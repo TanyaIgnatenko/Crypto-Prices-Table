@@ -1,9 +1,13 @@
-import React from 'react';
+import {useEffect} from 'react';
 import { CryptoPricesTable } from './CryptoPricesTable/CryptoPricesTable';
+import ReactGA from './analytics';
 
 import './App.css';
 
 function App() {
+  useEffect(() => {
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }, []);
 
   return (
     <div>
