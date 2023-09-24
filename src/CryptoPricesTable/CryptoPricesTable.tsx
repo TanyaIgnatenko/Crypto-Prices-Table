@@ -54,6 +54,15 @@ const CHART_OPTIONS = {
     legend: {
       display: false,
     },
+    tooltip: {
+      enabled: false,
+    }
+  },
+  tooltips: {
+    enabled: false,
+  },
+  hover: {
+    mode: null
   },
   animation: {
     duration: 0
