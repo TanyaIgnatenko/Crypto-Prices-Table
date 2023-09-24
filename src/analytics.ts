@@ -1,4 +1,4 @@
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 
 ReactGA.initialize('G-T7EWM7958J');
 
