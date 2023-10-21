@@ -42,11 +42,15 @@ const CHART_HEIGHT = 54;
 
 export const CryptoPricesTable = () => {
   const [data, setData] = useState<{ nodes: Cryptocurrency[] }>({ nodes: [] });
+  const [isFirstLoading, setIsFirstLoading] = useState(true);
   const [isFetchError, setIsFetchError] = useState(false);
 
   useEffect(() => {
     fetchCoins(1, TABLE_PAGE_SIZE)
-      .then(data => setData({ nodes: data }))
+      .then(data => {
+        setData({ nodes: data });
+        setIsFirstLoading(false);
+      })
       .catch(() => setIsFetchError(true));
   }, []);
 
@@ -172,13 +176,13 @@ export const CryptoPricesTable = () => {
           </>
         )}
       </Table>
-      <Group position='right' mx={10} my={5}>
+      {!isFirstLoading && (<Group position='right' mx={10} my={5}>
         <Pagination
           total={TOTAL_CRYPTOCURRENCY_COUNT / TABLE_PAGE_SIZE}
           page={pagination.state.page}
           onChange={pagination.fns.onSetPage}
         />
-      </Group>
+      </Group>)}
     </div>
   );
 };

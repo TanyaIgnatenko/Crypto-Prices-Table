@@ -8,6 +8,7 @@ export function useTableTheme() {
       Table: `
             --data-table-library_grid-template-columns:  80px 240px 275px 275px 275px 275px 280px;
             height: 880px;
+            background: linear-gradient(to right, #0C0A1D 0 319px, #202020 319px 320px, #1D1229 320px);
             `,
 
       HeaderCell: `
