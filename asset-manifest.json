@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/crypto-prices-table/static/css/main.9da43e94.css",
-    "main.js": "/crypto-prices-table/static/js/main.799f2be2.js",
+    "main.css": "/crypto-prices-table/static/css/main.a7d0373a.css",
+    "main.js": "/crypto-prices-table/static/js/main.e9a0f2ac.js",
     "index.html": "/crypto-prices-table/index.html",
     "static/media/arrow-down.svg": "/crypto-prices-table/static/media/arrow-down.7ed2e027a322b11ddacc01894ad308bc.svg",
     "static/media/arrow-up.svg": "/crypto-prices-table/static/media/arrow-up.905ff8710ac15bb83626add96f02ff19.svg",
-    "main.9da43e94.css.map": "/crypto-prices-table/static/css/main.9da43e94.css.map",
-    "main.799f2be2.js.map": "/crypto-prices-table/static/js/main.799f2be2.js.map"
+    "main.a7d0373a.css.map": "/crypto-prices-table/static/css/main.a7d0373a.css.map",
+    "main.e9a0f2ac.js.map": "/crypto-prices-table/static/js/main.e9a0f2ac.js.map"
   },
   "entrypoints": [
-    "static/css/main.9da43e94.css",
-    "static/js/main.799f2be2.js"
+    "static/css/main.a7d0373a.css",
+    "static/js/main.e9a0f2ac.js"
   ]
 }
