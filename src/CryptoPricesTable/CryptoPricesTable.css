@@ -1,7 +1,3 @@
-iframe {
-    display: none;
-}
-
 .table-container {
     width: 1382px;
     margin: 0 auto;
@@ -22,24 +18,12 @@ iframe {
     height: 14px;
 }
 
-.green {
-    color: #4bca81 !important;
+.increase {
+    color: #4bca81;
 }
 
-.red {
-    color: #ed4a6d !important;
-}
-
-.loadMoreButtonBox {
-    width: 100vw;
-    display: flex;
-    justify-content: center;
-}
-
-.row {
-    display: contents;
-    transition: background 200ms ease;
-    background: white;
+.decrease {
+    color: #ed4a6d;
 }
 
 .error-msg {

@@ -118,45 +118,53 @@ export const CryptoPricesTable = () => {
 
                 return (
                   <Row key={item.id} item={item}>
-                    <div className='row'>
-                      <Cell pinLeft>{item.rank}</Cell>
-                      <Cell pinLeft>
-                        <img
-                          alt=''
-                          className='crypto-icon'
-                          src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`}
-                        />
-                        {item.name}&nbsp;
-                        <span className='crypto-symbol'>{item.symbol}</span>
-                      </Cell>
-                      <Cell>{priceFormatter.format(+item.priceUsd)}</Cell>
-                      <Cell className={is24hChangePositive ? 'green' : 'red'}>
-                        {is24hChangePositive ? (
-                          <ArrowUpIcon className='arrow-icon' />
-                        ) : (
-                          <ArrowDownIcon className='arrow-icon' />
-                        )}
-                        &nbsp;
+                    <Cell pinLeft>{item.rank}</Cell>
+                    <Cell pinLeft>
+                      <img
+                        alt=''
+                        className='crypto-icon'
+                        src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`}
+                      />
+                      {item.name}&nbsp;
+                      <span className='crypto-symbol'>{item.symbol}</span>
+                    </Cell>
+                    <Cell>{priceFormatter.format(+item.priceUsd)}</Cell>
+                    <Cell>
+                      {is24hChangePositive ? (
+                        <ArrowUpIcon className='arrow-icon' />
+                      ) : (
+                        <ArrowDownIcon className='arrow-icon' />
+                      )}
+                      &nbsp;
+                      <p
+                        className={
+                          is24hChangePositive ? 'increase' : 'decrease'
+                        }
+                      >
                         {formatPriceChange(+item.changePercent24Hr)}
-                      </Cell>
-                      <Cell className={is7dChangePositive ? 'green' : 'red'}>
-                        {is7dChangePositive ? (
-                          <ArrowUpIcon className='arrow-icon' />
-                        ) : (
-                          <ArrowDownIcon className='arrow-icon' />
-                        )}
-                        &nbsp;
+                      </p>
+                    </Cell>
+                    <Cell>
+                      {is7dChangePositive ? (
+                        <ArrowUpIcon className='arrow-icon' />
+                      ) : (
+                        <ArrowDownIcon className='arrow-icon' />
+                      )}
+                      &nbsp;
+                      <p
+                        className={is7dChangePositive ? 'increase' : 'decrease'}
+                      >
                         {priceFormatter.format(Math.abs(item.changePercent7d))}
-                      </Cell>
-                      <Cell>{priceFormatter.format(+item.marketCapUsd)}</Cell>
-                      <Cell>
-                        <Line
-                          options={CHART_OPTIONS}
-                          data={priceChartData}
-                          height={CHART_HEIGHT}
-                        />
-                      </Cell>
-                    </div>
+                      </p>
+                    </Cell>
+                    <Cell>{priceFormatter.format(+item.marketCapUsd)}</Cell>
+                    <Cell>
+                      <Line
+                        options={CHART_OPTIONS}
+                        data={priceChartData}
+                        height={CHART_HEIGHT}
+                      />
+                    </Cell>
                   </Row>
                 );
               })}

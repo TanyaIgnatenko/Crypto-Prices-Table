@@ -7,6 +7,7 @@ export function useTableTheme() {
     {
       Table: `
             --data-table-library_grid-template-columns:  80px 240px 275px 275px 275px 275px 280px;
+            height: 880px;
             `,
 
       HeaderCell: `
