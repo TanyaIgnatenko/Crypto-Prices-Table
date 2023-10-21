@@ -1,7 +1,5 @@
 import { useTheme } from '@table-library/react-table-library/theme';
-import {
-  getTheme,
-} from '@table-library/react-table-library/mantine';
+import { getTheme } from '@table-library/react-table-library/mantine';
 
 export function useTableTheme() {
   return useTheme([
@@ -16,7 +14,7 @@ export function useTableTheme() {
           border-top: 1px solid #202020;
           font-size: 12px;
         }
-      `  ,
+      `,
 
       BaseCell: `
             & {

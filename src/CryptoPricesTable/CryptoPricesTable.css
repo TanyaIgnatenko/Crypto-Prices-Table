@@ -41,3 +41,9 @@ iframe {
     transition: background 200ms ease;
     background: white;
 }
+
+.error-msg {
+    color: white;
+    font-size: 26px;
+    margin-left: 20px;
+}
