@@ -4,8 +4,9 @@ The goal of the project was to built a cryptocurrency prices table with real-tim
 __Demo:__ https://tanyaignatenko.github.io/Crypto-Prices-Table/
 
 Features:
-- Shows prices real-time
-- Shows for every cryptocurrency a chart with price changes in 7 days
+- Ability to see current information about changes in cryptocurrency prices
+- Ability to see price updates real-time
+- Ability to see a chart of price changes in 7 days for every cryptocurrency
 
 Technologies: React, TypeScript, WebSockets, HTML, CSS, chart.js
 
