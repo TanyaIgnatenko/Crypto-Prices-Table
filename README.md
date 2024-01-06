@@ -1,5 +1,5 @@
 # Crypto Prices Table
-Built a cryptocurrency prices table with real-time prices updates.
+The goal of the project was to built a cryptocurrency prices table with real-time prices updates.
 
 __Demo:__ https://tanyaignatenko.github.io/Crypto-Prices-Table/
 
